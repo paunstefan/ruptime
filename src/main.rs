@@ -20,7 +20,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         None => {
             let current_time_str = local.format("%H:%M:%S").to_string();
             let uptime_str = build_uptime_string(&uptime, UptimeFormat::Normal);
-            let loadavg_str = get_loadavg(fs::read_to_string("/proc/loadavg")?)?;
+            let loadavg_str = get_loadavg(fs::read_to_string("/proc/loadavg")?);
 
             let mut buf: Vec<u8> = Vec::new();
             let mut f = fs::File::open("/var/run/utmp")?;
@@ -114,7 +114,7 @@ fn get_uptime(read_data: String) -> Result<Duration, Box<dyn Error>> {
 }
 
 /// Reads /proc/loadavg and formats the result
-fn get_loadavg(read_data: String) -> Result<String, Box<dyn Error>> {
+fn get_loadavg(read_data: String) -> String {
     let load: Vec<String> = read_data
         .split_whitespace()
         .take(3)
@@ -123,7 +123,7 @@ fn get_loadavg(read_data: String) -> Result<String, Box<dyn Error>> {
 
     let load_str = format!("{}, {}, {}", load[0], load[1], load[2]);
 
-    Ok(load_str)
+    load_str
 }
 
 /// Print usage information
